@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 
 const IDIOMAS_OPCIONES = [
   'Francés',
+  'Alemán',
   'Inglés',
   'Español',
   'Italiano',
@@ -20,6 +21,7 @@ const SECTORES_OPCIONES = [
   'Administración',
   'Informática',
   'Comercial/Ventas',
+  'Finanzas',
   'Marketing',
   'Eventos',
   'Relojería',

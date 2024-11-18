@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient';
 // Opciones de Idiomas y Sectores (puedes completarlas según tus necesidades)
 const IDIOMAS_OPCIONES = [
   'Francés',
+  'Alemán',
   'Inglés',
   'Español',
   'Italiano',
@@ -22,6 +23,7 @@ const SECTORES_OPCIONES = [
   'Administración',
   'Informática',
   'Comercial/Ventas',
+  'Finanzas',
   'Marketing',
   'Eventos',
   'Relojería',
@@ -35,7 +37,7 @@ const FilterButton = ({ selected, type, onClick, isActive }) => {
     if (selected.length === 0) {
       switch (type) {
         case 'sociedades':
-          return 'Sociedad';
+          return 'Agencia';
         case 'ciudades':
           return 'Ciudad';
         case 'idiomas':

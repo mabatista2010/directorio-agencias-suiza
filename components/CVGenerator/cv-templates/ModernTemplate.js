@@ -3,32 +3,33 @@ import React from 'react';
 // Función para formatear los campos opcionales
 const formatOptionalField = (key, value) => {
   if (!value || key === '') return value;
-  
 
-    let label;
-    switch(key) {
-      case 'drivingLicense':
-        label = 'Permiso de conducir';
-        return `${label}: ${Array.isArray(value) ? value.join(', ') : value}`;
-        case 'freeText':
-          label = '';
-          return `${label}: ${Array.isArray(value) ? value.join(', ') : value}`;
-      case 'birthDate':
-        label = 'Fecha de nacimiento';
-        return `${label}: ${value}`;
-      case 'birthPlace':
-        label = 'Lugar de nacimiento';
-        return `${label}: ${value}`;
-      case 'nationality':
-        label = 'Nacionalidad';
-        return `${label}: ${value}`;
-      case 'maritalStatus':
-        label = 'Estado civil';
-        return `${label}: ${value}`;
-      default:
-        return `${key}: ${Array.isArray(value) ? value.join(', ') : value}`;
-    }
-  };
+  // Si es freeText, devolver solo el valor sin formato adicional
+  if (key === 'freeText') {
+    return value;
+  }
+
+  let label;
+  switch(key) {
+    case 'drivingLicense':
+      label = 'Permiso de conducir';
+      return `${label}: ${Array.isArray(value) ? value.join(', ') : value}`;
+    case 'birthDate':
+      label = 'Fecha de nacimiento';
+      return `${label}: ${value}`;
+    case 'birthPlace':
+      label = 'Lugar de nacimiento';
+      return `${label}: ${value}`;
+    case 'nationality':
+      label = 'Nacionalidad';
+      return `${label}: ${value}`;
+    case 'maritalStatus':
+      label = 'Estado civil';
+      return `${label}: ${value}`;
+    default:
+      return `${key}: ${Array.isArray(value) ? value.join(', ') : value}`;
+  }
+};
 
 export default function ModernTemplate({ data }) {
   return (

@@ -1,0 +1,26 @@
+.quill {
+  background: white;
+}
+
+.ql-container {
+  border: 1px solid #e5e7eb;
+  border-radius: 0 0 0.5rem 0.5rem;
+  background: white;
+}
+
+.ql-toolbar {
+  border: 1px solid #e5e7eb;
+  border-bottom: none;
+  border-radius: 0.5rem 0.5rem 0 0;
+  background: white;
+}
+
+.ql-editor {
+  min-height: 200px;
+  font-family: inherit;
+}
+
+.ql-editor:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}

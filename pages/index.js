@@ -127,12 +127,16 @@ export default function Home() {
               'map'
             )}
           >
-            <svg className="w-12 h-12 mx-auto mb-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6" />
-            </svg>
-            <h4 className="text-lg sm:text-xl font-semibold mb-2">Mapa Interactivo</h4>
-            <p className="text-gray-600">Encuentra agencias en cualquier región de Suiza con facilidad usando nuestro mapa interactivo.</p>
-          </div>
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white">
+                    <svg className="h-12 w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+              </div>
+              <h4 className="text-lg sm:text-xl font-semibold mb-2">Mapa Interactivo</h4>
+              <p className="text-gray-600">
+                Encuentra agencias en cualquier región de Suiza con facilidad usando nuestro mapa interactivo.
+              </p>
+            </div>
 
           {/* Feature 2 - Generador de CV */}
           <div 
@@ -190,36 +194,38 @@ export default function Home() {
             <p className="text-gray-600">Crea tu CV profesional personalizado con múltiples plantillas y opciones de diseño.</p>
           </div>
 
-          {/* Feature 3 */}
+          {/* Feature 3 - Centro de Ayuda/FAQ */}
           <div 
             className="bg-white rounded-lg shadow-lg p-6 text-center transform hover:scale-105 transition duration-300 cursor-pointer"
             onClick={() => openModalWithContent(
-              'Información Detallada',
+              'Centro de Ayuda',
               [
                 {
-                  title: 'Datos Básicos',
+                  title: 'Guías y Recursos',
                   content: (
                     <div className="space-y-2">
                       <p className="font-medium text-gray-700">Información esencial:</p>
                       <ul className="list-disc list-inside text-gray-600">
-                        <li>Sectores de actividad</li>
-                        <li>Nombres y direcciones</li>
-                        <li>Idiomas hablados</li>
-                        <li>Teléfonos de contacto</li>
-                        <li>Emails directos</li>
+                        <li>Guías paso a paso</li>
+                        <li>Preguntas frecuentes</li>
+                        <li>Consejos prácticos</li>
+                        <li>Recursos útiles</li>
+                        <li>Documentación necesaria</li>
                       </ul>
                     </div>
                   )
                 },
                 {
-                  title: 'Servicios',
+                  title: 'Temas Principales',
                   content: (
                     <div className="space-y-2">
-                      <p className="font-medium text-gray-700">Servicios ofrecidos:</p>
+                      <p className="font-medium text-gray-700">Áreas cubiertas:</p>
                       <ul className="list-disc list-inside text-gray-600">
-                        <li>Proceso de selección</li>
-                        <li>Apoyo en documentación</li>
-                        <li>Asesoría laboral</li>
+                        <li>Permisos de trabajo</li>
+                        <li>Proceso de contratación</li>
+                        <li>Requisitos legales</li>
+                        <li>Trámites administrativos</li>
+                        <li>Vida en Suiza</li>
                       </ul>
                     </div>
                   )
@@ -229,10 +235,12 @@ export default function Home() {
             )}
           >
             <svg className="w-12 h-12 mx-auto mb-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 18.5a6.5 6.5 0 100-13 6.5 6.5 0 000 13z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <h4 className="text-lg sm:text-xl font-semibold mb-2">Información Detallada</h4>
-            <p className="text-gray-600">Accede a información completa sobre cada agencia, incluyendo servicios y datos de contacto.</p>
+            <h4 className="text-lg sm:text-xl font-semibold mb-2">Centro de Ayuda</h4>
+            <p className="text-gray-600">
+              Resuelve tus dudas con nuestra guía completa sobre trabajo temporal en Suiza y procesos de contratación.
+            </p>
           </div>
         </div>
       </section>

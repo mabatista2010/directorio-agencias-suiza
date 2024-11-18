@@ -238,7 +238,7 @@ const GoogleMapComponent = ({ agencies }) => {
 
               <div className="flex justify-between mt-2 space-x-2">
                 <a 
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${selectedAgency.latitud},${selectedAgency.longitud}`}
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(selectedAgency.direccion)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 text-center bg-gray-100 text-gray-700 px-3 py-2 rounded hover:bg-gray-200 text-sm transition-colors"

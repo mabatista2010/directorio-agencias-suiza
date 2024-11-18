@@ -142,17 +142,20 @@ const ModernPDF = ({ data }) => (
           {/* Campos opcionales */}
           {Object.entries(data.optionalFields || {}).map(([key, value]) => {
             if (!value) return null;
+
+            // Si es freeText, renderizar solo el valor
+            if (key === 'freeText') {
+              return (
+                <Text key={key} style={styles.contactInfo}>
+                  {value}
+                </Text>
+              );
+            }
+
             let label;
             switch(key) {
               case 'drivingLicense':
                 label = 'Permis de conduire';
-                return (
-                  <Text key={key} style={styles.contactInfo}>
-                    {label}: {Array.isArray(value) ? value.join(', ') : value}
-                  </Text>
-                );
-                case 'freeText':
-                label = '';
                 return (
                   <Text key={key} style={styles.contactInfo}>
                     {label}: {Array.isArray(value) ? value.join(', ') : value}
@@ -168,7 +171,7 @@ const ModernPDF = ({ data }) => (
                 label = 'Nationalité';
                 break;
               case 'maritalStatus':
-                label = 'Êtat civil';
+                label = 'État civil';
                 break;
               default:
                 label = key;

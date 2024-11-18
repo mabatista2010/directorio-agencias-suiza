@@ -4,10 +4,35 @@ import ModernTemplate from './cv-templates/ModernTemplate';
 import ClassicTemplate from './cv-templates/ClassicTemplate';
 import ProfessionalTemplate from './cv-templates/ProfessionalTemplate';
 import PDFDownloadButton from '../DynamicPDFDownloadButton'; 
+import EnhancedTextArea from '../EnhancedTextArea';
 
 const MONTHS = [
   'Janvier', 'Février', 'Mars', 'Avril', 'Mei', 'Juin',
   'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+];
+
+const SOFT_SKILLS = [
+  { es: 'Trabajo en equipo', fr: 'Travail en équipe' },
+  { es: 'Comunicación efectiva', fr: 'Communication efficace' },
+  { es: 'Liderazgo', fr: 'Leadership' },
+  { es: 'Gestión del tiempo', fr: 'Gestion du temps' },
+  { es: 'Resolución de problemas', fr: 'Résolution de problèmes' },
+  { es: 'Adaptabilidad', fr: 'Adaptabilité' },
+  { es: 'Pensamiento crítico', fr: 'Esprit critique' },
+  { es: 'Empatía', fr: 'Empathie' },
+  { es: 'Toma de decisiones', fr: 'Prise de décision' },
+  { es: 'Gestión del estrés', fr: 'Gestion du stress' },
+  { es: 'Creatividad', fr: 'Créativité' },
+  { es: 'Proactividad', fr: 'Proactivité' },
+  { es: 'Negociación', fr: 'Négociation' },
+  { es: 'Inteligencia emocional', fr: 'Intelligence émotionnelle' },
+  { es: 'Organización', fr: 'Organisation' },
+  { es: 'Atención al detalle', fr: 'Souci du détail' },
+  { es: 'Pensamiento analítico', fr: 'Esprit analytique' },
+  { es: 'Flexibilidad', fr: 'Flexibilité' },
+  { es: 'Iniciativa', fr: 'Initiative' },
+   { es: 'Puntual', fr: 'Ponctuel' },
+  { es: 'Profesionalismo', fr: 'Professionnalisme' }
 ];
 
 const templates = [
@@ -263,11 +288,11 @@ export default function CVGenerator() {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Descripción
             </label>
-            <textarea
-              value={exp.description}
-              onChange={(e) => updateListItem('experience', index, { description: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg"
-              rows={4}
+            <EnhancedTextArea
+              value={exp.description || ''}
+              onChange={(value) => updateListItem('experience', index, { description: value })}
+              type="experience"
+              className="w-full"
             />
           </div>
 
@@ -391,11 +416,11 @@ export default function CVGenerator() {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Descripción
             </label>
-            <textarea
-              value={edu.description}
-              onChange={(e) => updateListItem('education', index, { description: e.target.value })}
-              className="w-full px-3 py-2 border rounded-lg"
-              rows={4}
+            <EnhancedTextArea
+              value={edu.description || ''}
+              onChange={(value) => updateListItem('education', index, { description: value })}
+              type="education"
+              className="w-full"
             />
           </div>
 
@@ -480,9 +505,9 @@ export default function CVGenerator() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto py-8 px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Panel de edición */}
-          <div className="space-y-6">
+          <div className="w-full lg:w-1/2 space-y-6">
             {/* Selector de plantilla */}
             <div className="bg-white p-6 rounded-lg shadow">
               <h2 className="text-lg font-semibold mb-4">Elige una plantilla</h2>
@@ -637,12 +662,9 @@ export default function CVGenerator() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Resumen Profesional
                 </label>
-                <textarea
-                  value={formData.personalInfo.summary}
-                  onChange={(e) => handleInputChange('personalInfo', 'summary', e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  rows={4}
-                  placeholder="Breve descripción de tu perfil profesional..."
+                <EnhancedTextArea
+                  value={formData.personalInfo.summary || ''}
+                  onChange={(value) => handleInputChange('personalInfo', 'summary', value)}
                 />
               </div>
             </div>
@@ -794,48 +816,132 @@ export default function CVGenerator() {
                   </svg>
                 </button>
                 {activeSection === 'skills' && (
-                  <div className="p-6 border-t">
-                    <div className="mb-4">
-                      <input
-                        type="text"
-                        placeholder="Escribe una habilidad y presiona Enter"
-                        className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault();
-                            const value = e.target.value.trim();
-                            if (value && !formData.skills.includes(value)) {
-                              setFormData(prev => ({
-                                ...prev,
-                                skills: [...prev.skills, value]
-                              }));
-                              e.target.value = '';
+                  <div className="p-6 border-t space-y-6">
+                    {/* Input para habilidades personalizadas */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Agregar habilidad personalizada
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder=""
+                          className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                          onKeyDown={async (e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              const value = e.target.value.trim();
+
+                              if (!value) return;
+                              if (formData.skills.includes(value)) {
+                                alert('Esta habilidad ya está en la lista');
+                                return;
+                              }
+
+                              const input = e.target;
+                              const originalPlaceholder = input.placeholder;
+                              input.disabled = true;
+                              input.placeholder = "Traduciendo...";
+
+                              try {
+                                const response = await fetch('/api/translate-skill', {
+                                  method: 'POST',
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                  },
+                                  body: JSON.stringify({ text: value }),
+                                });
+
+                                if (!response.ok) throw new Error('Error en la traducción');
+
+                                const data = await response.json();
+
+                                setFormData(prev => ({
+                                  ...prev,
+                                  skills: [...prev.skills, data.translation]
+                                }));
+
+                                input.value = '';
+                              } catch (error) {
+                                console.error('Error:', error);
+                                alert('Error al traducir la habilidad. Por favor, intenta de nuevo.');
+                              } finally {
+                                input.disabled = false;
+                                input.placeholder = originalPlaceholder;
+                              }
                             }
-                          }
-                        }}
-                      />
+                          }}
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-2">
+                          <span className="text-xs text-gray-400">Enter para traducir</span>
+                        </div>
+                      </div>
+                      <p className="mt-1 text-xs text-gray-500">
+                        La habilidad se traducirá automáticamente al francés al presionar Enter
+                      </p>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {formData.skills.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm flex items-center"
-                        >
-                          {skill}
+
+
+                    {/* Lista de habilidades predefinidas */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Habilidades blandas disponibles
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {SOFT_SKILLS.map((skill) => (
                           <button
+                            key={skill.es}
                             onClick={() => {
-                              setFormData(prev => ({
-                                ...prev,
-                                skills: prev.skills.filter((_, i) => i !== index)
-                              }));
+                              if (!formData.skills.includes(skill.fr)) {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  skills: [...prev.skills, skill.fr]
+                                }));
+                              }
                             }}
-                            className="ml-2 text-blue-600 hover:text-blue-800"
+                            disabled={formData.skills.includes(skill.fr)}
+                            className={`px-3 py-1.5 text-sm rounded-full transition-colors ${
+                              formData.skills.includes(skill.fr)
+                                ? 'bg-blue-100 text-blue-800 opacity-50 cursor-not-allowed'
+                                : 'border border-gray-300 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-600'
+                            }`}
+                            title={skill.fr} // Muestra la traducción al pasar el mouse
                           >
-                            ×
+                            {skill.es}
                           </button>
-                        </span>
-                      ))}
+                        ))}
+                      </div>
                     </div>
+
+                    {/* Habilidades seleccionadas */}
+                    {formData.skills.length > 0 && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Habilidades seleccionadas
+                        </label>
+                        <div className="flex flex-wrap gap-2">
+                          {formData.skills.map((skill, index) => (
+                            <span
+                              key={index}
+                              className="group px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm flex items-center"
+                            >
+                              {skill}
+                              <button
+                                onClick={() => {
+                                  setFormData(prev => ({
+                                    ...prev,
+                                    skills: prev.skills.filter((_, i) => i !== index)
+                                  }));
+                                }}
+                                className="ml-2 text-blue-600 hover:text-blue-800 opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -868,28 +974,35 @@ export default function CVGenerator() {
           </div>
 
           {/* Vista previa del CV */}
-          <div className="lg:sticky lg:top-8">
-            <div className="bg-white rounded-lg shadow">
-              <div className="p-4 border-b flex justify-between items-center">
-                <h2 className="text-lg font-semibold">Vista Previa</h2>
-                <PDFDownloadButton
-                  document={
-                    activeTemplate === 'modern' ? <ModernPDF data={formData} /> :
-                    activeTemplate === 'classic' ? <ClassicPDF data={formData} /> :
-                    <ProfessionalPDF data={formData} />
-                  }
-                  fileName={`CV-${formData.personalInfo.firstName || 'usuario'}-${formData.personalInfo.lastName || 'apellido'}.pdf`}
-                />
-              </div>
-              <div className="p-8 max-h-[800px] overflow-y-auto">
-                {activeTemplate === 'modern' && <ModernTemplate data={formData} />}
-                {activeTemplate === 'classic' && <ClassicTemplate data={formData} />}
-                {activeTemplate === 'professional' && <ProfessionalTemplate data={formData} />}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+                    <div className="w-full lg:w-1/2">
+                      <div className="sticky top-8 transition-all duration-200" 
+                           style={{ 
+                             maxHeight: 'calc(100vh - 2rem)',
+                             marginBottom: '2rem'
+                           }}>
+                        <div className="bg-white rounded-lg shadow overflow-hidden flex flex-col">
+                          <div className="p-4 border-b flex justify-between items-center">
+                            <h2 className="text-lg font-semibold">Vista Previa</h2>
+                            <PDFDownloadButton
+                              document={
+                                activeTemplate === 'modern' ? <ModernPDF data={formData} /> :
+                                activeTemplate === 'classic' ? <ClassicPDF data={formData} /> :
+                                <ProfessionalPDF data={formData} />
+                              }
+                              fileName={`CV-${formData.personalInfo.firstName || 'usuario'}-${formData.personalInfo.lastName || 'apellido'}.pdf`}
+                            />
+                          </div>
+                          <div className="p-8 overflow-y-auto max-h-[50vh] lg:max-h-[calc(100vh-8rem)]">
+                            {activeTemplate === 'modern' && <ModernTemplate data={formData} />}
+                            {activeTemplate === 'classic' && <ClassicTemplate data={formData} />}
+                            {activeTemplate === 'professional' && <ProfessionalTemplate data={formData} />}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div> 
+                </div> 
+              </div> 
+            );
+          }
+

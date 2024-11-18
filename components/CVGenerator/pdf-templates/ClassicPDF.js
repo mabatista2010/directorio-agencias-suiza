@@ -111,9 +111,16 @@ const styles = StyleSheet.create({
   },
 });
 
-// Función para formatear campos opcionales en francés
 const formatOptionalField = (key, value) => {
   if (!value) return null;
+
+  // Si es freeText, devolver objeto con valor sin etiqueta
+  if (key === 'freeText') {
+    return {
+      label: '',
+      value: value
+    };
+  }
 
   let label;
   switch(key) {
@@ -170,8 +177,22 @@ const ClassicPDF = ({ data }) => (
 
           {/* Campos opcionales */}
           {Object.entries(data.optionalFields || {}).map(([key, value]) => {
+            if (!value) return null;
+
+            // Si es freeText, separar por líneas y mostrar cada una
+            if (key === 'freeText') {
+              // Dividir el texto por saltos de línea
+              const lines = value.split('\n');
+              return lines.map((line, index) => (
+                <Text key={`${key}-${index}`} style={[styles.optionalFields, { textAlign: 'left' }]}>
+                  {line.trim()}
+                </Text>
+              ));
+            }
+
             const formatted = formatOptionalField(key, value);
             if (!formatted) return null;
+
             return (
               <Text key={key} style={styles.optionalFields}>
                 {formatted.label}: {formatted.value}
@@ -184,7 +205,7 @@ const ClassicPDF = ({ data }) => (
       {/* Profil professionnel */}
       {data.personalInfo.summary && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Profi</Text>
+          <Text style={styles.sectionTitle}>Profil</Text>
           <Text style={styles.content}>{data.personalInfo.summary}</Text>
         </View>
       )}

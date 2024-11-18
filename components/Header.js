@@ -58,8 +58,11 @@ export default function Header() {
           <Link href="/cv-generator" className="text-gray-700 hover:text-blue-600 px-3 py-2">
             Crear CV
           </Link>
+          <Link href="/blog" className="text-gray-700 hover:text-blue-600 px-3 py-2">
+            FAQ
+          </Link>
         </nav>
-        </div>
+      </div>
 
       {/* Menú móvil */}
       {isOpen && (
@@ -80,9 +83,14 @@ export default function Header() {
                 Crear CV
               </Link>
             </li>
+            <li>
+              <Link href="/blog" className="text-gray-700 hover:text-blue-600 block py-2" onClick={() => setIsOpen(false)}>
+                FAQ
+              </Link>
+            </li>
           </ul>
         </nav>
       )}
-      </header>
-      );
-      }
+    </header>
+  );
+}

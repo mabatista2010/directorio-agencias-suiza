@@ -149,6 +149,15 @@ const styles = StyleSheet.create({
 const formatOptionalField = (key, value) => {
   if (!value) return null;
 
+  // Si es freeText, devolver solo el valor sin etiqueta
+  if (key === 'freeText') {
+    return (
+      <View key={key} style={[styles.contactInfo, { marginLeft: 20 }]}>
+        <Text style={styles.contentDark}>{formatted.value}</Text>
+      </View>
+    );
+  }
+
   let label;
   switch(key) {
     case 'drivingLicense':
@@ -225,7 +234,19 @@ const ProfessionalPDF = ({ data }) => (
         {data.optionalFields && Object.keys(data.optionalFields).length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitleDark}>Données personelles</Text>
-            {Object.entries(data.optionalFields).map(([key, value]) => {
+            {Object.entries(data.optionalFields || {}).map(([key, value]) => {
+              if (!value) return null;
+
+              // Si es freeText, alinear con los demás elementos sin el espacio extra
+              if (key === 'freeText') {
+                return (
+                  <View key={key} style={[styles.contactInfo, { marginLeft: 5 }]}>
+                    <Text style={{ color: '#d1d5db', fontSize: 10 }}>{value}</Text>
+                  </View>
+                );
+              }
+
+              // Para otros campos, usar el formateo normal
               const formatted = formatOptionalField(key, value);
               if (!formatted) return null;
 
@@ -238,8 +259,8 @@ const ProfessionalPDF = ({ data }) => (
                     {key === 'nationality' && '🌐'}
                     {key === 'maritalStatus' && '💍'}
                   </Text>
-                  <Text style={{ fontWeight: 'bold' }}>{formatted.label}:</Text>
-                  <Text style={{ marginLeft: 5 }}>{formatted.value}</Text>
+                  <Text style={{ fontWeight: 'bold', color: '#d1d5db', fontSize: 10 }}>{formatted.label}:</Text>
+                  <Text style={{ marginLeft: 5, color: '#d1d5db', fontSize: 10 }}>{formatted.value}</Text>
                 </View>
               );
             })}

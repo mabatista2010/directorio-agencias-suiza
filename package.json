@@ -14,14 +14,17 @@
     "@react-pdf/renderer": "^4.0.0",
     "@supabase/supabase-js": "^2.46.1",
     "html-to-pdfmake": "^2.5.14",
+    "latest": "^0.2.0",
     "lucide-react": "^0.263.1",
     "next": "^14.1.0",
+    "openai": "^4.71.1",
     "pdfmake": "^0.2.15",
     "react": "^18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^5.3.0"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.15",
     "@types/node": "^20.11.6",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",

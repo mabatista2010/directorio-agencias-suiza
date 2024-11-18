@@ -4,6 +4,14 @@ import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaCar, FaBirthdayCake, FaFlag, FaH
 const formatOptionalField = (key, value) => {
   if (!value) return null;
 
+  // Si es freeText, devolver solo el valor sin etiqueta
+  if (key === 'freeText') {
+    return {
+      label: '',
+      value: value
+    };
+  }
+
   let label;
   switch(key) {
     case 'drivingLicense':
@@ -117,9 +125,20 @@ export default function ProfessionalTemplate({ data }) {
                   const formatted = formatOptionalField(key, value);
                   if (!formatted) return null;
 
+                  // Si es freeText, mantener el mismo formato de lista pero sin etiqueta ni icono
+                  if (key === 'freeText') {
+                    return (
+                      <li key={key} className="flex items-center text-sm">
+                        {/* Agregamos un espacio vacío del mismo tamaño que ocuparía un icono */}
+                        <span className="w-6"></span>
+                        <span>{formatted.value}</span>
+                      </li>
+                    );
+                  }
+
                   return (
                     <li key={key} className="flex items-center">
-                      {getIcon(key) && <span>{getIcon(key)}</span>}
+                      {getIcon(key) && <span className="w-6">{getIcon(key)}</span>}
                       <span className="font-medium">{formatted.label}:</span>
                       <span className="ml-2">{formatted.value}</span>
                     </li>

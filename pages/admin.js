@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
+import Link from 'next/link'; // Importación añadida
 import { supabase } from '../lib/supabaseClient';
 import AgencyForm from '../components/AgencyForm';
 import SuccessMessage from '../components/SuccessMessage'; // Importación añadida
@@ -85,7 +86,7 @@ export default function AdminPage() {
   const [selectedAgency, setSelectedAgency] = useState(null);
   const [showForm, setShowForm] = useState(false);
 
-  // Añadir nuevo estado para la visibilidad
+  // Nuevo estado para la visibilidad del mensaje
   const [messageVisible, setMessageVisible] = useState(true);
 
   // Estados para filtros y confirmación de eliminación
@@ -99,10 +100,16 @@ export default function AdminPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [agencyToDelete, setAgencyToDelete] = useState(null);
 
+  // Nuevo estado para artículos
+  const [articles, setArticles] = useState([]);
+  const [showDeleteArticleConfirm, setShowDeleteArticleConfirm] = useState(false);
+  const [articleToDelete, setArticleToDelete] = useState(null);
+
   // Cargar agencias existentes
   useEffect(() => {
     if (isAuthenticated) {
       fetchAgencies();
+      fetchArticles(); // Cargar artículos al autenticar
     }
   }, [isAuthenticated]);
 
@@ -118,6 +125,22 @@ export default function AdminPage() {
     } else {
       setAgencies(data);
     }
+  };
+
+  // Función para obtener los artículos
+  const fetchArticles = async () => {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching articles:', error);
+      setError('Error al obtener los artículos.');
+      return;
+    }
+
+    setArticles(data);
   };
 
   // Verificar autenticación al cargar la página
@@ -207,6 +230,31 @@ export default function AdminPage() {
     }
   };
 
+  // Funciones para manejar artículos
+  const handleDeleteArticle = (article) => {
+    setArticleToDelete(article);
+    setShowDeleteArticleConfirm(true);
+  };
+
+  const handleDeleteArticleConfirm = async () => {
+    try {
+      const { error } = await supabase
+        .from('blog_posts')
+        .delete()
+        .eq('id', articleToDelete.id);
+
+      if (error) throw error;
+
+      setSuccessMessage('Artículo eliminado exitosamente');
+      await fetchArticles();
+      setShowDeleteArticleConfirm(false);
+      setArticleToDelete(null);
+    } catch (error) {
+      console.error('Error:', error);
+      setError('Error al eliminar el artículo: ' + error.message);
+    }
+  };
+
   // Función para obtener valores únicos para los filtros
   const getUniqueValues = (field) => 
     [...new Set(agencies.map(agency => agency[field]))].filter(Boolean).sort();
@@ -290,7 +338,7 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
-        <title>Panel Administrativo - Agencias</title>
+        <title>Panel Administrativo - Agencias y Artículos</title>
       </Head>
 
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -335,136 +383,216 @@ export default function AdminPage() {
         )}
 
         {/* Contenido principal */}
-        <div className="bg-white rounded-lg shadow">
-          {showForm ? (
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4">
-                {selectedAgency ? 'Editar Agencia' : 'Nueva Agencia'}
-              </h2>
-              <AgencyForm
-                onSubmit={handleSubmit}
-                isLoading={isLoading}
-                initialData={selectedAgency}
-              />
-            </div>
-          ) : (
-            <div className="relative">
-              {/* Contenedor de scroll horizontal con indicadores de sombra */}
+        <div className="space-y-8">
+          <div className="bg-white rounded-lg shadow">
+            {showForm ? (
+              <div className="p-6">
+                <h2 className="text-xl font-semibold mb-4">
+                  {selectedAgency ? 'Editar Agencia' : 'Nueva Agencia'}
+                </h2>
+                <AgencyForm
+                  onSubmit={handleSubmit}
+                  isLoading={isLoading}
+                  initialData={selectedAgency}
+                />
+              </div>
+            ) : (
               <div className="relative">
-                <div className="overflow-x-auto" style={{ maxHeight: 'calc(100vh - 300px)' }}>
-                  {/* Indicador de scroll derecha/izquierda */}
-                  <div
-                    className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent pointer-events-none z-10"
-                    style={{ opacity: '0.8' }}
-                  />
-                  <div
-                    className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none z-10"
-                    style={{ opacity: '0.8' }}
-                  />
+                {/* Contenedor de scroll horizontal con indicadores de sombra */}
+                <div className="relative">
+                  <div className="overflow-x-auto" style={{ maxHeight: 'calc(100vh - 300px)' }}>
+                    {/* Indicador de scroll derecha/izquierda */}
+                    <div
+                      className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent pointer-events-none z-10"
+                      style={{ opacity: '0.8' }}
+                    />
+                    <div
+                      className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none z-10"
+                      style={{ opacity: '0.8' }}
+                    />
 
-                  {/* Tabla con ancho mínimo para asegurar scroll en pantallas pequeñas */}
-                  <div className="min-w-max">
-                    <table className="w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50 sticky top-0 z-20">
-                        <tr>
-                          <TableHeader
-                            title="Nombre"
-                            options={getUniqueValues('nombre')}
-                            selectedFilters={filters.nombre}
-                            onFilterChange={(newFilters) =>
-                              setFilters((prev) => ({ ...prev, nombre: newFilters }))
-                            }
-                          />
-                          <TableHeader
-                            title="Sociedad"
-                            options={getUniqueValues('sociedad')}
-                            selectedFilters={filters.sociedad}
-                            onFilterChange={(newFilters) =>
-                              setFilters((prev) => ({ ...prev, sociedad: newFilters }))
-                            }
-                          />
-                          <TableHeader
-                            title="Dirección"
-                            options={getUniqueValues('direccion')}
-                            selectedFilters={filters.direccion}
-                            onFilterChange={(newFilters) =>
-                              setFilters((prev) => ({ ...prev, direccion: newFilters }))
-                            }
-                          />
-                          <TableHeader
-                            title="Teléfono"
-                            options={getUniqueValues('telefono')}
-                            selectedFilters={filters.telefono}
-                            onFilterChange={(newFilters) =>
-                              setFilters((prev) => ({ ...prev, telefono: newFilters }))
-                            }
-                          />
-                          <TableHeader
-                            title="Idiomas"
-                            options={getUniqueValues('idiomas')}
-                            selectedFilters={filters.idiomas}
-                            onFilterChange={(newFilters) =>
-                              setFilters((prev) => ({ ...prev, idiomas: newFilters }))
-                            }
-                          />
-                          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-gray-50">
-                            Acciones
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {filteredAgencies.map((agency) => (
-                          <tr key={agency.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm font-medium text-gray-900">
-                                {agency.nombre}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-500">
-                                {agency.sociedad}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-500">
-                                {agency.direccion}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-500">
-                                {agency.telefono}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-500">
-                                {agency.idiomas}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2 sticky right-0 bg-white">
-                              <button
-                                onClick={() => handleEdit(agency)}
-                                className="text-blue-600 hover:text-blue-900">
-                                Editar
-                              </button>
-                              <button
-                                onClick={() => handleDeleteClick(agency)}
-                                className="text-red-600 hover:text-red-900">
-                                Eliminar
-                              </button>
-                            </td>
+                    {/* Tabla con ancho mínimo para asegurar scroll en pantallas pequeñas */}
+                    <div className="min-w-max">
+                      <table className="w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50 sticky top-0 z-20">
+                          <tr>
+                            <TableHeader
+                              title="Nombre"
+                              options={getUniqueValues('nombre')}
+                              selectedFilters={filters.nombre}
+                              onFilterChange={(newFilters) =>
+                                setFilters((prev) => ({ ...prev, nombre: newFilters }))
+                              }
+                            />
+                            <TableHeader
+                              title="Sociedad"
+                              options={getUniqueValues('sociedad')}
+                              selectedFilters={filters.sociedad}
+                              onFilterChange={(newFilters) =>
+                                setFilters((prev) => ({ ...prev, sociedad: newFilters }))
+                              }
+                            />
+                            <TableHeader
+                              title="Dirección"
+                              options={getUniqueValues('direccion')}
+                              selectedFilters={filters.direccion}
+                              onFilterChange={(newFilters) =>
+                                setFilters((prev) => ({ ...prev, direccion: newFilters }))
+                              }
+                            />
+                            <TableHeader
+                              title="Teléfono"
+                              options={getUniqueValues('telefono')}
+                              selectedFilters={filters.telefono}
+                              onFilterChange={(newFilters) =>
+                                setFilters((prev) => ({ ...prev, telefono: newFilters }))
+                              }
+                            />
+                            <TableHeader
+                              title="Idiomas"
+                              options={getUniqueValues('idiomas')}
+                              selectedFilters={filters.idiomas}
+                              onFilterChange={(newFilters) =>
+                                setFilters((prev) => ({ ...prev, idiomas: newFilters }))
+                              }
+                            />
+                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-gray-50">
+                              Acciones
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {filteredAgencies.map((agency) => (
+                            <tr key={agency.id} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm font-medium text-gray-900">
+                                  {agency.nombre}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-500">
+                                  {agency.sociedad}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-500">
+                                  {agency.direccion}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-500">
+                                  {agency.telefono}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-500">
+                                  {agency.idiomas}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2 sticky right-0 bg-white">
+                                <button
+                                  onClick={() => handleEdit(agency)}
+                                  className="text-blue-600 hover:text-blue-900">
+                                  Editar
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteClick(agency)}
+                                  className="text-red-600 hover:text-red-900">
+                                  Eliminar
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
+            )}
+          </div>
+
+          {/* Nueva Sección: Gestión de Artículos */}
+          <div className="mt-8 bg-white rounded-lg shadow">
+            <div className="px-4 py-5 sm:px-6 flex justify-between items-center border-b">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">
+                Gestión de Artículos
+              </h3>
+              <Link
+                href="/admin/blog/new"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              >
+                Nuevo Artículo
+              </Link>
             </div>
-          )}
+            <div className="p-6">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Título
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Categoría
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Estado
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Fecha
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Acciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {articles?.map((article) => (
+                    <tr key={article.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">{article.title}</div>
+                        <div className="text-sm text-gray-500">{article.slug}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{article.category}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          article.status === 'published' 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {article.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(article.created_at).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <Link
+                          href={`/admin/blog/edit/${article.id}`}
+                          className="text-blue-600 hover:text-blue-900 mr-4"
+                        >
+                          Editar
+                        </Link>
+                        <button
+                          onClick={() => handleDeleteArticle(article)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {/* Fin de la nueva sección */}
         </div>
       </div>
 
-      {/* Modal de confirmación para eliminar */}
+      {/* Modal de confirmación para eliminar agencia */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-sm mx-4">
@@ -481,6 +609,31 @@ export default function AdminPage() {
               </button>
               <button
                 onClick={handleDeleteConfirm}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmación para eliminar artículo */}
+      {showDeleteArticleConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-sm mx-4">
+            <h3 className="text-lg font-semibold mb-4">Confirmar eliminación</h3>
+            <p className="text-gray-600 mb-6">
+              ¿Estás seguro de que deseas eliminar el artículo{' '}
+              <span className="font-semibold">{articleToDelete?.title}</span>?
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowDeleteArticleConfirm(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800">
+                Cancelar
+              </button>
+              <button
+                onClick={handleDeleteArticleConfirm}
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
                 Eliminar
               </button>

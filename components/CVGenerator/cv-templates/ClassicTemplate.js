@@ -4,6 +4,11 @@ import React from 'react';
 const formatOptionalField = (key, value) => {
   if (!value) return null;
 
+  // Si es freeText, devolver solo el valor
+  if (key === 'freeText') {
+    return value;
+  }
+
   let label;
   switch(key) {
     case 'drivingLicense':
@@ -71,9 +76,13 @@ export default function ClassicTemplate({ data }) {
           {Object.entries(data.optionalFields || {}).map(([key, value]) => {
             const formatted = formatOptionalField(key, value);
             if (!formatted) return null;
-            return (
-              <span key={key}>{formatted}</span>
-            );
+
+            // Si es freeText, mostrar solo el valor
+            if (key === 'freeText') {
+              return <span key={key}>{formatted}</span>;
+            }
+
+            return <span key={key}>{formatted}</span>;
           })}
         </div>
       </div>
