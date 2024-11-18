@@ -1,16 +1,17 @@
 // pages/_app.js
 import { useState, useEffect } from 'react';
-import '../styles/globals.css';
-import 'react-quill/dist/quill.snow.css';
 import CookieBanner from '../components/CookieBanner';
+import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }) {
-  // Estado para controlar el montaje del banner
   const [mounted, setMounted] = useState(false);
 
-  // Montar el banner solo después de la hidratación inicial
   useEffect(() => {
     setMounted(true);
+    // Cargar el CSS de Quill solo en el cliente
+    if (typeof window !== 'undefined') {
+      import('react-quill/dist/quill.snow.css');
+    }
   }, []);
 
   return (

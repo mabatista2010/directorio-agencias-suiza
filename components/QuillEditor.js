@@ -1,16 +1,41 @@
-import React from 'react';
+// components/QuillEditor.js
+import React, { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { supabase } from '../lib/supabaseClient';
-import 'react-quill/dist/quill.snow.css';
 
-const QuillEditor = ({ value, onChange, error }) => {
-  const ReactQuill = dynamic(() => import('react-quill'), {
+const ReactQuill = dynamic(
+  async () => {
+    const { default: RQ } = await import('react-quill');
+    if (typeof window !== 'undefined') {
+      await import('react-quill/dist/quill.snow.css');
+    }
+    return function Quill({ forwardedRef, ...props }) {
+      return <RQ ref={forwardedRef} {...props} />;
+    };
+  },
+  { 
     ssr: false,
     loading: () => <p>Cargando editor...</p>
-  });
+  }
+);
 
-  // Función para manejar la subida de imágenes
-  const imageHandler = async () => {
+const QuillEditor = ({ value, onChange, error }) => {
+  const [editorValue, setEditorValue] = useState(value || '');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    setEditorValue(value || '');
+  }, [value]);
+
+  const handleChange = useCallback((content) => {
+    setEditorValue(content);
+    if (onChange) {
+      onChange(content);
+    }
+  }, [onChange]);
+
+  const imageHandler = useCallback(async () => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', 'image/*');
@@ -20,12 +45,10 @@ const QuillEditor = ({ value, onChange, error }) => {
       const file = input.files[0];
       if (file) {
         try {
-          // Crear un nombre único para el archivo
           const fileExt = file.name.split('.').pop();
           const fileName = `${Date.now()}.${fileExt}`;
           const filePath = `blog-content/${fileName}`;
 
-          // Subir la imagen a Supabase Storage
           const { data, error: uploadError } = await supabase.storage
             .from('blog-images')
             .upload(filePath, file, {
@@ -35,16 +58,13 @@ const QuillEditor = ({ value, onChange, error }) => {
 
           if (uploadError) throw uploadError;
 
-          // Obtener la URL pública de la imagen
           const { data: { publicUrl } } = supabase.storage
             .from('blog-images')
             .getPublicUrl(filePath);
 
-          // Obtener la referencia al editor
           const editor = document.querySelector('.ql-editor');
           const range = document.getSelection().getRangeAt(0);
 
-          // Insertar la imagen en el editor
           const img = document.createElement('img');
           img.src = publicUrl;
           img.style.maxWidth = '100%';
@@ -56,9 +76,8 @@ const QuillEditor = ({ value, onChange, error }) => {
         }
       }
     };
-  };
+  }, []);
 
-  // Configuración del editor
   const modules = {
     toolbar: {
       container: [
@@ -74,20 +93,30 @@ const QuillEditor = ({ value, onChange, error }) => {
     }
   };
 
+  if (!mounted) {
+    return <div className="h-96 bg-gray-50 rounded-lg animate-pulse" />;
+  }
+
   return (
-    <div>
+    <div className="relative">
       <style jsx global>{`
+        .ql-container {
+          height: auto !important;
+          min-height: 300px;
+        }
+        .ql-editor {
+          min-height: 300px;
+          height: auto !important;
+        }
         .ql-editor img {
           max-width: 100%;
           height: auto;
           display: block;
           margin: 1em 0;
         }
-
         .ql-editor p {
           margin-bottom: 1em;
         }
-
         .ql-snow .ql-toolbar button.ql-image:hover .ql-stroke,
         .ql-snow.ql-toolbar button.ql-image:hover .ql-stroke {
           stroke: #2563eb;
@@ -95,12 +124,14 @@ const QuillEditor = ({ value, onChange, error }) => {
       `}</style>
 
       <ReactQuill
-        value={value}
-        onChange={onChange}
-        modules={modules}
-        className="h-96 mb-12"
         theme="snow"
+        value={editorValue}
+        onChange={handleChange}
+        modules={modules}
+        className="w-full"
+        preserveWhitespace={true}
       />
+
       {error && (
         <p className="mt-1 text-sm text-red-600">{error}</p>
       )}
