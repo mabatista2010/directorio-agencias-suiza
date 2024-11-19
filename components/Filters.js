@@ -14,6 +14,7 @@ const IDIOMAS_OPCIONES = [
 
 const SECTORES_OPCIONES = [
   'Construcción',
+  'Limpieza',
   'Logística',
   'Paisajismo',
   'Hostelería',
