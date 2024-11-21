@@ -1,32 +1,40 @@
-// pages/_app.js
-import { useState, useEffect } from 'react';
-import Script from 'next/script';
-import CookieBanner from '../components/CookieBanner';
-import '../styles/globals.css';
+// pages/_document.js
+import { Html, Head, Main, NextScript } from 'next/document';
 
-function MyApp({ Component, pageProps }) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    // Cargar el CSS de Quill solo en el cliente
-    if (typeof window !== 'undefined') {
-      import('react-quill/dist/quill.snow.css');
-    }
-  }, []);
-
+export default function Document() {
   return (
-    <>
-      <Script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7676657640751958"
-        crossOrigin="anonymous"
-        strategy="afterInteractive"
-      />
-      <Component {...pageProps} />
-      {mounted && <CookieBanner />}
-    </>
+    <Html lang="es">
+      <Head>
+        {/* Google Tag Manager */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-WWTBM8L7');`
+          }}
+        />
+
+        {/* Fuentes de Google Fonts */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
+      <body className="font-sans">
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe 
+            src="https://www.googletagmanager.com/ns.html?id=GTM-WWTBM8L7"
+            height="0" 
+            width="0" 
+            style={{display: 'none', visibility: 'hidden'}}
+          />
+        </noscript>
+        <Main />
+        <NextScript />
+      </body>
+    </Html>
   );
 }
-
-export default MyApp;
