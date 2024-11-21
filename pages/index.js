@@ -27,13 +27,6 @@ export default function Home() {
         <title>Directorio de Agencias de Trabajo Temporal en Suiza</title>
         <meta name="description" content="Encuentra agencias de trabajo temporal en Suiza de manera fácil y rápida." />
         <link rel="icon" href="/favicon.ico" />
-
-        {/* Google AdSense Script */}
-        <script 
-          async 
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7676657640751958"
-          crossOrigin="anonymous"
-        />
       </Head>
 
       <Header />

@@ -6,13 +6,6 @@ export default function Document() {
   return (
     <Html lang="es">
       <Head>
-        {/* Google AdSense Script */}
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
-          crossOrigin="anonymous"
-          data-ad-client="ca-pub-pub-7676657640751958" // Tu ID de cliente de AdSense
-        ></script>
 
         {/* Fuentes de Google Fonts */}
         <link

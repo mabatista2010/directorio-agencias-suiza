@@ -143,7 +143,7 @@ export default function BlogIndex({ initialArticles = [], categories = [], tags 
           name="description" 
           content="Encuentra información útil sobre trabajo temporal en Suiza, procesos de contratación y más."
         />
-      </Head>
+        </Head>
 
       <Header />
 
