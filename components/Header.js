@@ -12,7 +12,7 @@ export default function Header() {
           className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
           aria-label="Ir a la página de inicio"
         >
-          Agencias Suiza
+          ETT Suisse
         </Link>
 
         {/* Botón de menú para móviles */}
@@ -59,7 +59,7 @@ export default function Header() {
             Crear CV
           </Link>
           <Link href="/blog" className="text-gray-700 hover:text-blue-600 px-3 py-2">
-            FAQ
+            Preguntas frecuentes
           </Link>
         </nav>
       </div>
@@ -85,7 +85,7 @@ export default function Header() {
             </li>
             <li>
               <Link href="/blog" className="text-gray-700 hover:text-blue-600 block py-2" onClick={() => setIsOpen(false)}>
-                FAQ
+                Preguntas frecuentes
               </Link>
             </li>
           </ul>

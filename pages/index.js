@@ -198,7 +198,7 @@ export default function Home() {
           <div 
             className="bg-white rounded-lg shadow-lg p-6 text-center transform hover:scale-105 transition duration-300 cursor-pointer"
             onClick={() => openModalWithContent(
-              'Centro de Ayuda',
+              'Consejos prácticos',
               [
                 {
                   title: 'Guías y Recursos',
@@ -206,7 +206,6 @@ export default function Home() {
                     <div className="space-y-2">
                       <p className="font-medium text-gray-700">Información esencial:</p>
                       <ul className="list-disc list-inside text-gray-600">
-                        <li>Guías paso a paso</li>
                         <li>Preguntas frecuentes</li>
                         <li>Consejos prácticos</li>
                         <li>Recursos útiles</li>
@@ -237,7 +236,7 @@ export default function Home() {
             <svg className="w-12 h-12 mx-auto mb-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <h4 className="text-lg sm:text-xl font-semibold mb-2">Centro de Ayuda</h4>
+            <h4 className="text-lg sm:text-xl font-semibold mb-2">Preguntas frecuentes</h4>
             <p className="text-gray-600">
               Resuelve tus dudas con nuestra guía completa sobre trabajo temporal en Suiza y procesos de contratación.
             </p>
