@@ -7,7 +7,7 @@ import PDFDownloadButton from '../DynamicPDFDownloadButton';
 import EnhancedTextArea from '../EnhancedTextArea';
 
 const MONTHS = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mei', 'Juin',
+  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
   'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
 ];
 
@@ -89,7 +89,7 @@ const OPTIONAL_FIELDS = [
 ];
 
 const LANGUAGE_LEVELS = [
-  'Básico', 'Intermedio', 'Avanzado', 'Nativo'
+  'Débutant', 'Moyen', 'Avancé', 'Langue maternelle'
 ];
 
 export default function CVGenerator() {
