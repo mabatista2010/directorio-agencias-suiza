@@ -15,6 +15,11 @@ export default function Home() {
     variant: 'default'
   });
 
+  const SITE_URL = "https://ettsuisse.com"; // Cambia esto a tu dominio
+  const SITE_NAME = "Trabajo Temporal Suiza";
+  const TITLE = "Directorio de Agencias de Trabajo Temporal en Suiza";
+  const DESCRIPTION = "Encuentra agencias de trabajo temporal en Suiza de manera fácil y rápida.";
+
   // Función para abrir el modal con contenido específico
   const openModalWithContent = (title, content, variant = 'default') => {
     setModalContent({ title, content, variant });
@@ -24,9 +29,59 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen font-sans">
       <Head>
-        <title>Directorio de Agencias de Trabajo Temporal en Suiza</title>
-        <meta name="description" content="Encuentra agencias de trabajo temporal en Suiza de manera fácil y rápida." />
+        {/* Básicos */}
+        <title>{TITLE}</title>
+        <meta name="description" content={DESCRIPTION} />
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
         <link rel="icon" href="/favicon.ico" />
+
+        {/* Google Search */}
+        <meta itemProp="name" content={TITLE} />
+        <meta itemProp="description" content={DESCRIPTION} />
+        <meta itemProp="image" content={`${SITE_URL}/images/google-search.jpg`} />
+        <meta property="og:image:search" content={`${SITE_URL}/images/google-search.jpg`} />
+
+        {/* Schema.org */}
+        <script 
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": SITE_NAME,
+              "description": DESCRIPTION,
+              "url": SITE_URL,
+              "image": {
+                "@type": "ImageObject",
+                "url": `${SITE_URL}/images/social-share.png`,
+                "width": "846",
+                "height": "1024"
+              }
+            })
+          }}
+        />
+
+        {/* OpenGraph / Facebook / WhatsApp */}
+        <meta property="og:site_name" content={SITE_NAME} />
+        <meta property="og:title" content={TITLE} />
+        <meta property="og:description" content={DESCRIPTION} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={SITE_URL} />
+
+        {/* Principal Open Graph image para redes sociales */}
+        <meta property="og:image" content={`${SITE_URL}/images/social-share.png`} />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={TITLE} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={TITLE} />
+        <meta name="twitter:description" content={DESCRIPTION} />
+        <meta name="twitter:image" content={`${SITE_URL}/images/social-share.png`} />
+        <meta name="twitter:image:alt" content={TITLE} />
       </Head>
 
       <Header />

@@ -290,6 +290,7 @@ export default function BlogEditor({ onSubmit, initialData = null }) {
               <option value="vivienda">Vivienda</option>
               <option value="salarios">Salarios y Condiciones</option>
               <option value="cultura">Cultura y Adaptación</option>
+              <option value="ayudas-subsidios">Ayudas y subsidios</option>
             </select>
             {errors.category && (
               <p className="mt-1 text-sm text-red-600">{errors.category}</p>

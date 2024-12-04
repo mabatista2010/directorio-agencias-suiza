@@ -13,6 +13,7 @@ const CATEGORY_MAPPING = {
   'idiomas': 'Idiomas',
   'vivienda': 'Vivienda',
   'salarios': 'Salarios y Condiciones',
+  'ayudas-subsidios': 'Ayudas y subsidios',
   'cultura': 'Cultura y Adaptación'
 };
 
